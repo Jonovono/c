@@ -67,7 +67,7 @@ And then should be able to install going:
 ## Contact
 Follow me or give me feedback/suggestions etc on twitter [@Jonovono](https://twitter.com/#!/jonovono)
 
-Don't be afraid to make some changes and submit them! I am sure it can be improved greatly.
+Don't be afraid to make some changes and submit them!
 	
 
 	
