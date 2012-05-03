@@ -10,7 +10,7 @@ created:  2012 May 02
 c
 =========
 
-## Add comments to files or folders
+## Give folders or files Comments!!
 Sometimes I lose track of what certain folders or files are for or do. Instead of having to open the project I wanted a way to quickly give a certain directory a comment describing what the project does or what technology it makes use of. Couldn't find a way to do this easily, so I made this.
 
 This is my first C program, so feel free to send some fixes or point out things I have done that could be better. Would love some feedback!
