@@ -64,6 +64,10 @@ And then should be able to install going:
 	
 	$ sudo make install
 	
+And those on Mac should be able to use:
+
+	$ brew install c
+	
 ## Contact
 Follow me or give me feedback/suggestions etc on twitter [@Jonovono](https://twitter.com/#!/jonovono)
 
