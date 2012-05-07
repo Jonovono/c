@@ -10,6 +10,9 @@ created:  2012 May 02
 c
 =========
 
+## Screenshot
+![C screenshot](http://i.imgur.com/D3fPm.png)
+
 ## Give folders or files Comments!!
 Sometimes I lose track of what certain folders or files are for or do. Instead of having to open the project I wanted a way to quickly give a certain directory a comment describing what the project does or what technology it makes use of. Couldn't find a way to do this easily, so I made this.
 
