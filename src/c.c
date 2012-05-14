@@ -4,7 +4,6 @@
 #include <string.h>
 #include <sys/types.h>  // For stat().
 #include <sys/stat.h>   // For stat().
-#include <sys/types.h>
 #include <dirent.h>
 
 typedef int bool;
