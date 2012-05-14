@@ -6,7 +6,7 @@
 #include <sys/stat.h>   // For stat().
 #include <sys/types.h>
 #include <dirent.h>
- 
+
 typedef int bool;
 #define true 1
 #define false 0
@@ -31,162 +31,162 @@ void put_multiline(const char *s,int width);
 void strip(char *s);
 
 int main (int argc, const char * argv[]) {
-	
-	// Get the current directory
-	char cwd[1024];
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-		;
-	else
-		perror("getcwd() error");	
-	
-	int numargs, all=0, asc=0, desc=0, push=0, uk=0, help=0, current=0;
-	const char *c;
-	
-	numargs = argc;
-	
-	while (--numargs > 0) {
-		c = argv[numargs];
-		
-		if (!strcmp(argv[numargs], "all"))
-			all = 1;
-		else if (!strcmp(argv[numargs], "-h") || !strcmp(argv[numargs], "--help"))
-			help = 1;
-		else if (!strcmp(argv[numargs], "."))
-			current = 1;
-		else if (!strcmp(argv[numargs], "-p") || !strcmp(argv[numargs], "--push"))
-			push = 1;
-		else if (!strcmp(argv[numargs], "-"))
-			desc = 1;
-		else if (!strcmp(argv[numargs], "+"))
-			asc = 1;
-		else
-			uk++;
-	}
-	
-		int args;
-		args = argc;
-		
-		if (uk > 2) {
-			printUsage();
-			return 1;
-		}
-		
-		switch(args) {
-			// Show the comment for the current directory
-			case 1: printUsage();
-							return 1;
-							break;
-			case 2: 
-							// Show the help menu
-							if (help) {
-								printUsage();
-								return 1;
-							}
-							// Show all the files
-							else if (all) {
-								makeDir(cwd);
-								printFiles(cwd);
-							}
-							// Show comment for the current directory
-							else if (current) {
-								// char *file;
-								// file = "CURRENT";
-								char * s = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-								sprintf(s, "%s/%s", cwd, argv[1]);
-								// checkComment(argv[1], cwd);
-								printCurrentComment(cwd);
-							}
-							// Show comment for the entered file
-							else {
-								// char *file = argv[1];
-								makeDir(cwd);
-								char * s = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-								sprintf(s, "%s/%s", cwd, argv[1]);
-								checkComment(argv[1], cwd);
-							}
-					break;
-			case 3: 
-							
-							if (current) {										// Add comment to the current directory
-								// char *file;
-								// file = "CURRENT";
-								addComment(argv[1], cwd, argv[2], false);
-							} else if (all && desc) {					// Print all files in descending order
-								makeDir(cwd);
-								printAllOrder(cwd, true);
-							} else if (all && asc) {					// Print all files in ascending order
-								makeDir(cwd);
-								printAllOrder(cwd, false);
-							}
-							else {														// Add comment to to given file
-									char * ss = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-									sprintf(ss, "%s/%s", cwd, argv[1]);
-									makeDir(cwd);
-									addComment(argv[1], cwd, argv[2], false);
-								}
-							break;
-							
-			case 4: 
-							// Push comment to the current directory
-							if (current && push) {
-								addComment(argv[1], cwd, argv[3], true);
-							// Add a comment to the given filename
-							} 
-							// Push comment to given file
-							else	if ( push) {
-									char * ss = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-									sprintf(ss, "%s/%s", cwd, argv[1]);
-									makeDir(cwd);
-									addComment(argv[1], cwd, argv[3], true);
-								}
-							break;
-							
-			// Not certain
-			default: printUsage();
-		}
+
+    // Get the current directory
+    char cwd[1024];
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+        ;
+    else
+        perror("getcwd() error");	
+
+    int numargs, all=0, asc=0, desc=0, push=0, uk=0, help=0, current=0;
+    const char *c;
+
+    numargs = argc;
+
+    while (--numargs > 0) {
+        c = argv[numargs];
+
+        if (!strcmp(argv[numargs], "all"))
+            all = 1;
+        else if (!strcmp(argv[numargs], "-h") || !strcmp(argv[numargs], "--help"))
+            help = 1;
+        else if (!strcmp(argv[numargs], "."))
+            current = 1;
+        else if (!strcmp(argv[numargs], "-p") || !strcmp(argv[numargs], "--push"))
+            push = 1;
+        else if (!strcmp(argv[numargs], "-"))
+            desc = 1;
+        else if (!strcmp(argv[numargs], "+"))
+            asc = 1;
+        else
+            uk++;
+    }
+
+    int args;
+    args = argc;
+
+    if (uk > 2) {
+        printUsage();
+        return 1;
+    }
+
+    switch(args) {
+        // Show the comment for the current directory
+        case 1: printUsage();
+                return 1;
+                break;
+        case 2: 
+                // Show the help menu
+                if (help) {
+                    printUsage();
+                    return 1;
+                }
+                // Show all the files
+                else if (all) {
+                    makeDir(cwd);
+                    printFiles(cwd);
+                }
+                // Show comment for the current directory
+                else if (current) {
+                    // char *file;
+                    // file = "CURRENT";
+                    char * s = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
+                    sprintf(s, "%s/%s", cwd, argv[1]);
+                    // checkComment(argv[1], cwd);
+                    printCurrentComment(cwd);
+                }
+                // Show comment for the entered file
+                else {
+                    // char *file = argv[1];
+                    makeDir(cwd);
+                    char * s = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
+                    sprintf(s, "%s/%s", cwd, argv[1]);
+                    checkComment(argv[1], cwd);
+                }
+                break;
+        case 3: 
+
+                if (current) {										// Add comment to the current directory
+                    // char *file;
+                    // file = "CURRENT";
+                    addComment(argv[1], cwd, argv[2], false);
+                } else if (all && desc) {					// Print all files in descending order
+                    makeDir(cwd);
+                    printAllOrder(cwd, true);
+                } else if (all && asc) {					// Print all files in ascending order
+                    makeDir(cwd);
+                    printAllOrder(cwd, false);
+                }
+                else {														// Add comment to to given file
+                    char * ss = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
+                    sprintf(ss, "%s/%s", cwd, argv[1]);
+                    makeDir(cwd);
+                    addComment(argv[1], cwd, argv[2], false);
+                }
+                break;
+
+        case 4: 
+                // Push comment to the current directory
+                if (current && push) {
+                    addComment(argv[1], cwd, argv[3], true);
+                    // Add a comment to the given filename
+                } 
+                // Push comment to given file
+                else	if ( push) {
+                    char * ss = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
+                    sprintf(ss, "%s/%s", cwd, argv[1]);
+                    makeDir(cwd);
+                    addComment(argv[1], cwd, argv[3], true);
+                }
+                break;
+
+                // Not certain
+        default: printUsage();
+    }
     return 0;
 }
 
 //Checks if a directory exists.
 bool dirOrFileExists(const char dir[]) {
-	struct stat st;
-	if (stat(dir, &st) == 0) {
-		return true;
-	}
-	else {
-		return false;
-	}
+    struct stat st;
+    if (stat(dir, &st) == 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 // Makes the comment directory at the path given
 void makeDir(char path[]) {
-	// Append this to the path of the directory we want to put it in
-	char * s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-	sprintf(s, "%s/%s", path, COMMENT);
-	
-	if (!dirOrFileExists(s))
-		mkdir(s, S_IRWXU);
+    // Append this to the path of the directory we want to put it in
+    char * s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
+    sprintf(s, "%s/%s", path, COMMENT);
+
+    if (!dirOrFileExists(s))
+        mkdir(s, S_IRWXU);
 }
 
 // Prints all the files in the current directory
 void printFiles(char path[]) {
-	// Print the current directories comment
-	printCurrentComment(path);
-	printf("\n");
-	
-	DIR *mydir = opendir(path);
-  struct dirent *entry = NULL;
-  
-  while((entry = readdir(mydir))) /* If we get EOF, the expression is 0 and
-                                   * the loop stops. */
-  {
-		//We will not show the dot files
-		if (entry->d_name[0] == '.') {
-			continue;
-		}
-			checkComment(entry->d_name, path);
-  }
-  closedir(mydir);
+    // Print the current directories comment
+    printCurrentComment(path);
+    printf("\n");
+
+    DIR *mydir = opendir(path);
+    struct dirent *entry = NULL;
+
+    while((entry = readdir(mydir))) /* If we get EOF, the expression is 0 and
+                                     * the loop stops. */
+    {
+        //We will not show the dot files
+        if (entry->d_name[0] == '.') {
+            continue;
+        }
+        checkComment(entry->d_name, path);
+    }
+    closedir(mydir);
 }
 
 // Checks if entered a file or directory
@@ -194,274 +194,274 @@ void printFiles(char path[]) {
 // Return 1 if File
 // Else return -1
 int fileOrDirectory(const char path[]) {
-	struct stat s;
-	
-	if (stat(path, &s) == 0) {
-		if (s.st_mode & S_IFDIR) {
-			// Is a directory
-			return 0;
-		} else if (s.st_mode & S_IFREG) {
-			// Is a file
-			return 1;
-		} else {
-			// Something else
-			return -1;
-		}
-	}
-	else {
-		// Error
-		printf("Error occurred\n");
-	}
+    struct stat s;
+
+    if (stat(path, &s) == 0) {
+        if (s.st_mode & S_IFDIR) {
+            // Is a directory
+            return 0;
+        } else if (s.st_mode & S_IFREG) {
+            // Is a file
+            return 1;
+        } else {
+            // Something else
+            return -1;
+        }
+    }
+    else {
+        // Error
+        printf("Error occurred\n");
+    }
 }
 
 // Checks if entered file/dir has a comment
 // If so prints it. If not just prints file/dir name
 void checkComment(const char file[], char path[]) {
-	char *dir;
-	char *s;
-	
-	// First add the comment path to the end of the current path
-	if (dirOrFileExists(file)) {
-		int ford = fileOrDirectory(file);
-			switch(ford) {
-				// Directory was entered
-				case 0: 
-								// Appends the directory name to the end of current path
-								dir = malloc(snprintf(NULL, 0, "%s/%s", path, file) + 1);
-								sprintf(dir, "%s/%s", path, file);
-								makeDir(dir);
-								
-								// Add .comment directory to that path
-								char * commentDir = malloc(snprintf(NULL, 0, "%s/%s", dir, COMMENT) + 1);
-								sprintf(commentDir, "%s/%s", dir, COMMENT);
-								
-								// Ands ..comment to that path to get the comment for that directory
-								char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", commentDir, DOT) + 1);
-								sprintf(fin, "%s/%s.comment", commentDir, DOT);
-								
-								if (dirOrFileExists(fin)) {
-									printComment(file, fin);
-								} else {
-									printf(BLUE "%s" RESETCOLOR "\n", file);
-								}
-								break;
-				// File is entered
-				case 1:	
-								// makeDir(path);
-								// Adds /.comment to the end of the current path
-								s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-								sprintf(s, "%s/%s", path, COMMENT);
+    char *dir;
+    char *s;
 
-								//Next add the file to the end of that path
-								char * r = malloc(snprintf(NULL, 0, "%s/%s.comment", s, file) + 1);
-								sprintf(r, "%s/%s.comment", s, file);
+    // First add the comment path to the end of the current path
+    if (dirOrFileExists(file)) {
+        int ford = fileOrDirectory(file);
+        switch(ford) {
+            // Directory was entered
+            case 0: 
+                // Appends the directory name to the end of current path
+                dir = malloc(snprintf(NULL, 0, "%s/%s", path, file) + 1);
+                sprintf(dir, "%s/%s", path, file);
+                makeDir(dir);
 
-								if (dirOrFileExists(r)) {
-									printComment(file, r);
-								} else {
-									printf(BLUE "%s" RESETCOLOR "\n", file);
-								}
-								break;
-				// Unknown what was entered
-				default: printf("Not sure what to do here...");
-							 	break;
-					}
-				} else {
-					printf("Sorry cant find a file called %s\n", file);
-				}
+                // Add .comment directory to that path
+                char * commentDir = malloc(snprintf(NULL, 0, "%s/%s", dir, COMMENT) + 1);
+                sprintf(commentDir, "%s/%s", dir, COMMENT);
+
+                // Ands ..comment to that path to get the comment for that directory
+                char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", commentDir, DOT) + 1);
+                sprintf(fin, "%s/%s.comment", commentDir, DOT);
+
+                if (dirOrFileExists(fin)) {
+                    printComment(file, fin);
+                } else {
+                    printf(BLUE "%s" RESETCOLOR "\n", file);
+                }
+                break;
+                // File is entered
+            case 1:	
+                // makeDir(path);
+                // Adds /.comment to the end of the current path
+                s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
+                sprintf(s, "%s/%s", path, COMMENT);
+
+                //Next add the file to the end of that path
+                char * r = malloc(snprintf(NULL, 0, "%s/%s.comment", s, file) + 1);
+                sprintf(r, "%s/%s.comment", s, file);
+
+                if (dirOrFileExists(r)) {
+                    printComment(file, r);
+                } else {
+                    printf(BLUE "%s" RESETCOLOR "\n", file);
+                }
+                break;
+                // Unknown what was entered
+            default: printf("Not sure what to do here...");
+                     break;
+        }
+    } else {
+        printf("Sorry cant find a file called %s\n", file);
+    }
 }
 
 // Prints the comment for the current directory
 void printCurrentComment(char path[]) {
-	makeDir(path);
-	// Append /.comment to the end of the current path
-	char *dir = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-	sprintf(dir, "%s/%s", path, COMMENT);
-	
-	// Append ..comment to the end of that path
-	char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", dir, DOT) + 1);
-	sprintf(fin, "%s/%s.comment", dir, DOT);
-	
-	if (dirOrFileExists(fin)) {
-	// Open that file to print the conents
-	FILE *fp;
-	char ch;
-	char newch[1000];
-	fp = fopen(fin, "r");
-	int i = 0;
-	while (1) {
-		ch = fgetc(fp);
-		newch[i] = ch;
-		if (ch == EOF) {
-			newch[i] = '\0';
-			break;
-		}
-		i++;
-	}
-	printf(BLUE "Current Directory:" RESETCOLOR "\t");
-	put_multiline(newch, 50);
-	printf("\n");
+    makeDir(path);
+    // Append /.comment to the end of the current path
+    char *dir = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
+    sprintf(dir, "%s/%s", path, COMMENT);
 
-	fclose(fp);
-} else {
-	printf(BLUE "Current directory" RESETCOLOR "\thas no comment\n");
-}
+    // Append ..comment to the end of that path
+    char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", dir, DOT) + 1);
+    sprintf(fin, "%s/%s.comment", dir, DOT);
+
+    if (dirOrFileExists(fin)) {
+        // Open that file to print the conents
+        FILE *fp;
+        char ch;
+        char newch[1000];
+        fp = fopen(fin, "r");
+        int i = 0;
+        while (1) {
+            ch = fgetc(fp);
+            newch[i] = ch;
+            if (ch == EOF) {
+                newch[i] = '\0';
+                break;
+            }
+            i++;
+        }
+        printf(BLUE "Current Directory:" RESETCOLOR "\t");
+        put_multiline(newch, 50);
+        printf("\n");
+
+        fclose(fp);
+    } else {
+        printf(BLUE "Current directory" RESETCOLOR "\thas no comment\n");
+    }
 }
 
 // Print the comment for the given filename
 void printComment(const char filename[], char path[]) {
-	FILE *fp;
-	char ch;
-	char newch[1000];
-	fp = fopen(path, "r");
-	printf(BLUE "%s", filename);
-	printf(RESETCOLOR "");
-	int i = 0;
-	printf("\t");
-	while (1) {
-		ch = fgetc(fp);
-		newch[i] = ch;
-		if (ch == EOF) {
-			newch[i] = '\0';
-			break;
-		}
-		// printf("%c", ch);
-		i++;
-	}
-	// printf("%s\n", newch);
-	put_multiline(newch, 50);
-	printf("\n");
+    FILE *fp;
+    char ch;
+    char newch[1000];
+    fp = fopen(path, "r");
+    printf(BLUE "%s", filename);
+    printf(RESETCOLOR "");
+    int i = 0;
+    printf("\t");
+    while (1) {
+        ch = fgetc(fp);
+        newch[i] = ch;
+        if (ch == EOF) {
+            newch[i] = '\0';
+            break;
+        }
+        // printf("%c", ch);
+        i++;
+    }
+    // printf("%s\n", newch);
+    put_multiline(newch, 50);
+    printf("\n");
 
-	fclose(fp);
+    fclose(fp);
 }
 
 // Adds a comment to the given file/directory
 void addComment(const char file[], char path[], const char comment[], bool append) {
-	char *dir;
-	
-	if (dirOrFileExists(file)) {
-		int ford = fileOrDirectory(file);
-			switch(ford) {
-				// File was entered
-				case 0: 
-								// Adds the file entered to the end of the current path
-								dir = malloc(snprintf(NULL, 0, "%s/%s", path, file) + 1);
-								sprintf(dir, "%s/%s", path, file);
-								// Creates the directory .comment at that path
-								makeDir(dir);
-								
-								// Add .comment directory to the path
-								char * commentDir = malloc(snprintf(NULL, 0, "%s/%s", dir, COMMENT) + 1);
-								sprintf(commentDir, "%s/%s", dir, COMMENT);
+    char *dir;
 
-								// Add ..comment in that folder
-								char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", commentDir, DOT) + 1);
-								sprintf(fin, "%s/%s.comment", commentDir, DOT);
-								
-								FILE *fp2;
-								if (append) {
-									fp2 = fopen(fin, "a");
-									fprintf(fp2, " %s", comment);
-								} else {
-									fp2 = fopen(fin, "w+");		
-									fprintf(fp2, "%s", comment);
-								}
-								fclose(fp2);
-				
-								break;
-				// File is entered
-				case 1:	makeDir(path);
+    if (dirOrFileExists(file)) {
+        int ford = fileOrDirectory(file);
+        switch(ford) {
+            // File was entered
+            case 0: 
+                // Adds the file entered to the end of the current path
+                dir = malloc(snprintf(NULL, 0, "%s/%s", path, file) + 1);
+                sprintf(dir, "%s/%s", path, file);
+                // Creates the directory .comment at that path
+                makeDir(dir);
 
-								// This will get a string with the path/.comment
-								// Append this to the path of the directory we want to put it in
-								char * s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-								sprintf(s, "%s/%s", path, COMMENT);
+                // Add .comment directory to the path
+                char * commentDir = malloc(snprintf(NULL, 0, "%s/%s", dir, COMMENT) + 1);
+                sprintf(commentDir, "%s/%s", dir, COMMENT);
 
-								// Now add the file we want to that
-								char * full = malloc(snprintf(NULL, 0, "%s/%s.comment", s, file) + 1);
-								sprintf(full, "%s/%s.comment", s, file);
+                // Add ..comment in that folder
+                char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", commentDir, DOT) + 1);
+                sprintf(fin, "%s/%s.comment", commentDir, DOT);
 
-								FILE *fp;
-								if (append) {
-									fp = fopen(full, "a");
-									fprintf(fp, " %s", comment);
-								} else {
-									fp = fopen(full, "w+");		
-									fprintf(fp, "%s", comment);
-								}
-								fclose(fp);
-								break;
-				// Unknown what was entered
-				default: printf("Not sure what to do here...");
-							 	break;
-					}
-				} else {
-					printf("Sorry cant find a file called %s\n", file);
-				}
+                FILE *fp2;
+                if (append) {
+                    fp2 = fopen(fin, "a");
+                    fprintf(fp2, " %s", comment);
+                } else {
+                    fp2 = fopen(fin, "w+");		
+                    fprintf(fp2, "%s", comment);
+                }
+                fclose(fp2);
+
+                break;
+                // File is entered
+            case 1:	makeDir(path);
+
+                    // This will get a string with the path/.comment
+                    // Append this to the path of the directory we want to put it in
+                    char * s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
+                    sprintf(s, "%s/%s", path, COMMENT);
+
+                    // Now add the file we want to that
+                    char * full = malloc(snprintf(NULL, 0, "%s/%s.comment", s, file) + 1);
+                    sprintf(full, "%s/%s.comment", s, file);
+
+                    FILE *fp;
+                    if (append) {
+                        fp = fopen(full, "a");
+                        fprintf(fp, " %s", comment);
+                    } else {
+                        fp = fopen(full, "w+");		
+                        fprintf(fp, "%s", comment);
+                    }
+                    fclose(fp);
+                    break;
+                    // Unknown what was entered
+            default: printf("Not sure what to do here...");
+                     break;
+        }
+    } else {
+        printf("Sorry cant find a file called %s\n", file);
+    }
 }
 
 // Prints all the files in either ascending or descending order
 void printAllOrder(char newpath[], bool desc) {
-	printCurrentComment(newpath);
-	printf("\n");
-	
-	FILE *fp;
-	  int status;
-	  char path[1035];
+    printCurrentComment(newpath);
+    printf("\n");
 
-	  /* Open the command for reading. */
-		if (desc) {
-	  	fp = popen("/bin/ls -tr  ", "r");
-		} else {
-			fp = popen("/bin/ls -t  ", "r");
-		}
-	  if (fp == NULL) {
-	    printf("Failed to run command\n" );
-	    exit;
-	  }
+    FILE *fp;
+    int status;
+    char path[1035];
 
-	  /* Read the output a line at a time - output it. */
-	  while (fgets(path, sizeof(path)-1, fp) != NULL) {
-			strip(path);
-	    // printf("%s", path);
-			checkComment(path, newpath);
-	  }
-	  /* close */
-	  pclose(fp);
+    /* Open the command for reading. */
+    if (desc) {
+        fp = popen("/bin/ls -tr  ", "r");
+    } else {
+        fp = popen("/bin/ls -t  ", "r");
+    }
+    if (fp == NULL) {
+        printf("Failed to run command\n" );
+        exit;
+    }
+
+    /* Read the output a line at a time - output it. */
+    while (fgets(path, sizeof(path)-1, fp) != NULL) {
+        strip(path);
+        // printf("%s", path);
+        checkComment(path, newpath);
+    }
+    /* close */
+    pclose(fp);
 }
 
 // Usage for the program
 void printUsage() {
-		fprintf(stderr, BLUE "c\n" RESETCOLOR"  by @Jonovono - Add comments to files or directories.\n\n");
-		fprintf(stderr, "Usage:\n");
-		fprintf(stderr, "  c all to list all the files with their comments.\n");
-		fprintf(stderr, "  c all (+ or -) to list all the files in ascending or descending order.\n");
-		fprintf(stderr, "  c <filename> to view that files comment if there is one.\n");
-		fprintf(stderr, "  c <filename> \"comment\" give the entered file the entered comment\n");
-		fprintf(stderr, "  c <filename> -p \"{comment}\" to append comment to that files comment.\n");
-		fprintf(stderr, "  Replace <filename> with . to do the commands on the current directory.\n\n");
+    fprintf(stderr, BLUE "c\n" RESETCOLOR"  by @Jonovono - Add comments to files or directories.\n\n");
+    fprintf(stderr, "Usage:\n");
+    fprintf(stderr, "  c all to list all the files with their comments.\n");
+    fprintf(stderr, "  c all (+ or -) to list all the files in ascending or descending order.\n");
+    fprintf(stderr, "  c <filename> to view that files comment if there is one.\n");
+    fprintf(stderr, "  c <filename> \"comment\" give the entered file the entered comment\n");
+    fprintf(stderr, "  c <filename> -p \"{comment}\" to append comment to that files comment.\n");
+    fprintf(stderr, "  Replace <filename> with . to do the commands on the current directory.\n\n");
 }
 
 // If comment is long will print it in a nice column, ish
 void put_multiline(const char *s,int width)
 {
-  int n,i=0;
-  char t[100];
-  while( 1==sscanf(s,"%99s%n",t,&n) )
-  {
-    if( i+strlen(t)>width ) puts(""),i=0, printf("\t");
-    printf("%s%s",i?++i," ":"",t);i+=strlen(t);
-    s+=n;
-  }
+    int n,i=0;
+    char t[100];
+    while( 1==sscanf(s,"%99s%n",t,&n) )
+    {
+        if( i+strlen(t)>width ) puts(""),i=0, printf("\t");
+        printf("%s%s",i?++i," ":"",t);i+=strlen(t);
+        s+=n;
+    }
 }
 
 void strip(char *s) {
     char *p2 = s;
     while(*s != '\0') {
         if(*s != '\t' && *s != '\n') {
-                *p2++ = *s++;
+            *p2++ = *s++;
         } else {
-                ++s;
+            ++s;
         }
     }
     *p2 = '\0';
