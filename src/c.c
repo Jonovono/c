@@ -28,6 +28,8 @@ void printUsage();
 void printCurrentComment(char path[]);
 void put_multiline(const char *s,int width);
 void strip(char *s);
+char * allocFilename( const char* format, const char*  base, const char*  leaf );
+void freeFilename( char* filename );
 
 int main (int argc, const char * argv[]) {
 
@@ -88,10 +90,6 @@ int main (int argc, const char * argv[]) {
                 }
                 // Show comment for the current directory
                 else if (current) {
-                    // char *file;
-                    // file = "CURRENT";
-                    char * s = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-                    sprintf(s, "%s/%s", cwd, argv[1]);
                     // checkComment(argv[1], cwd);
                     printCurrentComment(cwd);
                 }
@@ -99,8 +97,6 @@ int main (int argc, const char * argv[]) {
                 else {
                     // char *file = argv[1];
                     makeDir(cwd);
-                    char * s = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-                    sprintf(s, "%s/%s", cwd, argv[1]);
                     checkComment(argv[1], cwd);
                 }
                 break;
@@ -118,8 +114,6 @@ int main (int argc, const char * argv[]) {
                     printAllOrder(cwd, false);
                 }
                 else {														// Add comment to to given file
-                    char * ss = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-                    sprintf(ss, "%s/%s", cwd, argv[1]);
                     makeDir(cwd);
                     addComment(argv[1], cwd, argv[2], false);
                 }
@@ -133,8 +127,6 @@ int main (int argc, const char * argv[]) {
                 } 
                 // Push comment to given file
                 else	if ( push) {
-                    char * ss = malloc(snprintf(NULL, 0, "%s/%s", cwd, argv[1]) + 1);
-                    sprintf(ss, "%s/%s", cwd, argv[1]);
                     makeDir(cwd);
                     addComment(argv[1], cwd, argv[3], true);
                 }
@@ -160,11 +152,12 @@ bool dirOrFileExists(const char dir[]) {
 // Makes the comment directory at the path given
 void makeDir(char path[]) {
     // Append this to the path of the directory we want to put it in
-    char * s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-    sprintf(s, "%s/%s", path, COMMENT);
+    char * s = allocFilename("%s/%s", path, COMMENT);
 
     if (!dirOrFileExists(s))
         mkdir(s, S_IRWXU);
+
+    freeFilename(s);
 }
 
 // Prints all the files in the current directory
@@ -226,40 +219,43 @@ void checkComment(const char file[], char path[]) {
             // Directory was entered
             case 0: 
                 // Appends the directory name to the end of current path
-                dir = malloc(snprintf(NULL, 0, "%s/%s", path, file) + 1);
-                sprintf(dir, "%s/%s", path, file);
+                dir = allocFilename("%s/%s", path, file);
                 makeDir(dir);
 
                 // Add .comment directory to that path
-                char * commentDir = malloc(snprintf(NULL, 0, "%s/%s", dir, COMMENT) + 1);
-                sprintf(commentDir, "%s/%s", dir, COMMENT);
+                char * commentDir = allocFilename("%s/%s", dir, COMMENT);
 
                 // Ands ..comment to that path to get the comment for that directory
-                char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", commentDir, DOT) + 1);
-                sprintf(fin, "%s/%s.comment", commentDir, DOT);
+                char * fin = allocFilename("%s/%s.comment", commentDir, DOT);
 
                 if (dirOrFileExists(fin)) {
                     printComment(file, fin);
                 } else {
                     printf(BLUE "%s" RESETCOLOR "\n", file);
                 }
+
+                freeFilename(commentDir);
+                freeFilename(fin);
+                freeFilename(dir);
                 break;
                 // File is entered
             case 1:	
                 // makeDir(path);
                 // Adds /.comment to the end of the current path
-                s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-                sprintf(s, "%s/%s", path, COMMENT);
+                s = allocFilename("%s/%s", path, COMMENT);
 
                 //Next add the file to the end of that path
-                char * r = malloc(snprintf(NULL, 0, "%s/%s.comment", s, file) + 1);
-                sprintf(r, "%s/%s.comment", s, file);
+                char * r = allocFilename("%s/%s.comment", s, file);
+
 
                 if (dirOrFileExists(r)) {
                     printComment(file, r);
                 } else {
                     printf(BLUE "%s" RESETCOLOR "\n", file);
                 }
+
+                freeFilename(s);
+                freeFilename(r);
                 break;
                 // Unknown what was entered
             default: printf("Not sure what to do here...");
@@ -274,12 +270,10 @@ void checkComment(const char file[], char path[]) {
 void printCurrentComment(char path[]) {
     makeDir(path);
     // Append /.comment to the end of the current path
-    char *dir = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-    sprintf(dir, "%s/%s", path, COMMENT);
+    char * dir = allocFilename("%s/%s", path, COMMENT);
 
     // Append ..comment to the end of that path
-    char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", dir, DOT) + 1);
-    sprintf(fin, "%s/%s.comment", dir, DOT);
+    char * fin = allocFilename("%s/%s.comment", dir, DOT);
 
     if (dirOrFileExists(fin)) {
         // Open that file to print the conents
@@ -305,6 +299,9 @@ void printCurrentComment(char path[]) {
     } else {
         printf(BLUE "Current directory" RESETCOLOR "\thas no comment\n");
     }
+
+    freeFilename(dir);
+    freeFilename(fin);
 }
 
 // Print the comment for the given filename
@@ -344,18 +341,15 @@ void addComment(const char file[], char path[], const char comment[], bool appen
             // File was entered
             case 0: 
                 // Adds the file entered to the end of the current path
-                dir = malloc(snprintf(NULL, 0, "%s/%s", path, file) + 1);
-                sprintf(dir, "%s/%s", path, file);
+                dir = allocFilename("%s/%s", path, file);
                 // Creates the directory .comment at that path
                 makeDir(dir);
 
                 // Add .comment directory to the path
-                char * commentDir = malloc(snprintf(NULL, 0, "%s/%s", dir, COMMENT) + 1);
-                sprintf(commentDir, "%s/%s", dir, COMMENT);
+                char * commentDir = allocFilename("%s/%s", dir, COMMENT);
 
                 // Add ..comment in that folder
-                char * fin = malloc(snprintf(NULL, 0, "%s/%s.comment", commentDir, DOT) + 1);
-                sprintf(fin, "%s/%s.comment", commentDir, DOT);
+                char * fin = allocFilename("%s/%s.comment", commentDir, DOT);
 
                 FILE *fp2;
                 if (append) {
@@ -367,18 +361,20 @@ void addComment(const char file[], char path[], const char comment[], bool appen
                 }
                 fclose(fp2);
 
+                freeFilename(dir);
+                freeFilename(commentDir);
+                freeFilename(fin);
+
                 break;
                 // File is entered
             case 1:	makeDir(path);
 
                     // This will get a string with the path/.comment
                     // Append this to the path of the directory we want to put it in
-                    char * s = malloc(snprintf(NULL, 0, "%s/%s", path, COMMENT) + 1);
-                    sprintf(s, "%s/%s", path, COMMENT);
+                    char * s = allocFilename("%s/%s", path, COMMENT);
 
                     // Now add the file we want to that
-                    char * full = malloc(snprintf(NULL, 0, "%s/%s.comment", s, file) + 1);
-                    sprintf(full, "%s/%s.comment", s, file);
+                    char * full = allocFilename("%s/%s.comment", s, file);
 
                     FILE *fp;
                     if (append) {
@@ -389,6 +385,9 @@ void addComment(const char file[], char path[], const char comment[], bool appen
                         fprintf(fp, "%s", comment);
                     }
                     fclose(fp);
+
+                    freeFilename(s);
+                    freeFilename(full);
                     break;
                     // Unknown what was entered
             default: printf("Not sure what to do here...");
@@ -464,4 +463,16 @@ void strip(char *s) {
         }
     }
     *p2 = '\0';
+}
+
+char * allocFilename( const char* format, const char*  base, const char*  leaf )
+{
+    char * s = malloc(snprintf(NULL, 0, format, base, leaf) + 1);
+    sprintf(s, format, base, leaf);
+    return s;
+}
+
+void freeFilename( char* filename )
+{
+    free(filename);
 }
