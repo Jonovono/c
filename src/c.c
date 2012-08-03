@@ -70,65 +70,57 @@ int main (int argc, const char *argv[]) {
 		return 1;
 	}
 
-	switch (args) {
-		// Show the comment for the current directory
-		case 1:
-				printUsage();
-				return 1;
-				break;
-		case 2: 
-				// Show the help menu
-				if (help) {
-					printUsage();
-					return 1;
-				}
-				// Show all the files
-				else if (all) {
-					makeDir(cwd);
-					printFiles(cwd);
-				}
-				// Show comment for the current directory
-				else if (current) {
-					// checkComment(argv[1], cwd);
-					printCurrentComment(cwd);
-				}
-				// Show comment for the entered file
-				else {
-					// char *file = argv[1];
-					makeDir(cwd);
-					checkComment(argv[1], cwd);
-				}
-				break;
-		case 3: 
-				if (current) {                               // Add comment to the current directory
-					// char *file;
-					// file = "CURRENT";
-					addComment(argv[1], cwd, argv[2], false);
-				} else if (all && desc) {                    // Print all files in descending order
-					makeDir(cwd);
-					printAllOrder(cwd, true);
-				} else if (all && asc) {                     // Print all files in ascending order
-					makeDir(cwd);
-					printAllOrder(cwd, false);
-				} else {                                     // Add comment to to given file
-					makeDir(cwd);
-					addComment(argv[1], cwd, argv[2], false);
-				}
-				break;
-
-		case 4: 
-				if (current && push) { // Push comment to the current directory
-					// Add a comment to the given filename
-					addComment(argv[1], cwd, argv[3], true);
-				} else if (push) {       // Push comment to given file
-					makeDir(cwd);
-					addComment(argv[1], cwd, argv[3], true);
-				}
-				break;
-
-				// Not certain
-		default:
-				printUsage();
+	if (args == 1) {
+			printUsage();
+			return 1;
+	} else if (args == 2) {
+		// Show the help menu
+		if (help) {
+			printUsage();
+			return 1;
+		}
+		// Show all the files
+		else if (all) {
+			makeDir(cwd);
+			printFiles(cwd);
+		}
+		// Show comment for the current directory
+		else if (current) {
+			// checkComment(argv[1], cwd);
+			printCurrentComment(cwd);
+		}
+		// Show comment for the entered file
+		else {
+			// char *file = argv[1];
+			makeDir(cwd);
+			checkComment(argv[1], cwd);
+		}
+	} else if (args == 3) {
+		if (current) {                               // Add comment to the current directory
+			// char *file;
+			// file = "CURRENT";
+			addComment(argv[1], cwd, argv[2], false);
+		} else if (all && desc) {                    // Print all files in descending order
+			makeDir(cwd);
+			printAllOrder(cwd, true);
+		} else if (all && asc) {                     // Print all files in ascending order
+			makeDir(cwd);
+			printAllOrder(cwd, false);
+		} else {                                     // Add comment to to given file
+			makeDir(cwd);
+			addComment(argv[1], cwd, argv[2], false);
+		}
+	} else if (args == 4) {
+		if (current && push) { // Push comment to the current directory
+			// Add a comment to the given filename
+			addComment(argv[1], cwd, argv[3], true);
+		} else if (push) {       // Push comment to given file
+			makeDir(cwd);
+			addComment(argv[1], cwd, argv[3], true);
+		}
+	} else {
+		// Not certain
+		printUsage();
 	}
 	return 0;
 }
@@ -207,52 +199,49 @@ void checkComment(const char *file, char *path) {
 	// First add the comment path to the end of the current path
 	if (dirOrFileExists(file)) {
 		int ford = fileOrDirectory(file);
-		switch(ford) {
+		if (ford == 0) {
 			// Directory was entered
-			case 0: 
-				// Appends the directory name to the end of current path
-				dir = allocFilename("%s/%s", path, file);
-				makeDir(dir);
+			// Appends the directory name to the end of current path
+			dir = allocFilename("%s/%s", path, file);
+			makeDir(dir);
 
-				// Add .comment directory to that path
-				char *commentDir = allocFilename("%s/%s", dir, COMMENT);
+			// Add .comment directory to that path
+			char *commentDir = allocFilename("%s/%s", dir, COMMENT);
 
-				// Ands ..comment to that path to get the comment for that directory
-				char *fin = allocFilename("%s/%s.comment", commentDir, DOT);
+			// Ands ..comment to that path to get the comment for that directory
+			char *fin = allocFilename("%s/%s.comment", commentDir, DOT);
 
-				if (dirOrFileExists(fin)) {
-					printComment(file, fin);
-				} else {
-					printf(BLUE "%s" RESETCOLOR "\n", file);
-				}
+			if (dirOrFileExists(fin)) {
+				printComment(file, fin);
+			} else {
+				printf(BLUE "%s" RESETCOLOR "\n", file);
+			}
 
-				freeFilename(commentDir);
-				freeFilename(fin);
-				freeFilename(dir);
-				break;
-				// File is entered
-			case 1:	
-				// makeDir(path);
-				// Adds /.comment to the end of the current path
-				s = allocFilename("%s/%s", path, COMMENT);
+			freeFilename(commentDir);
+			freeFilename(fin);
+			freeFilename(dir);
+		} else if (ford == 1) {
+			// File is entered
+			// makeDir(path);
+			// Adds /.comment to the end of the current path
+			s = allocFilename("%s/%s", path, COMMENT);
 
-				//Next add the file to the end of that path
-				char *r = allocFilename("%s/%s.comment", s, file);
+			//Next add the file to the end of that path
+			char *r = allocFilename("%s/%s.comment", s, file);
 
 
-				if (dirOrFileExists(r)) {
-					printComment(file, r);
-				} else {
-					printf(BLUE "%s" RESETCOLOR "\n", file);
-				}
+			if (dirOrFileExists(r)) {
+				printComment(file, r);
+			} else {
+				printf(BLUE "%s" RESETCOLOR "\n", file);
+			}
 
-				freeFilename(s);
-				freeFilename(r);
-				break;
-				// Unknown what was entered
-			default:
-					 printf("Not sure what to do here...");
-					 break;
+			freeFilename(s);
+			freeFilename(r);
+		} else {
+			// Unknown what was entered
+			 printf("Not sure what to do here...");
+			 break;
 		}
 	} else {
 		printf("Sorry cant find a file called %s\n", file);
@@ -330,62 +319,57 @@ void addComment(const char *file, char *path, const char *comment, bool append) 
 
 	if (dirOrFileExists(file)) {
 		int ford = fileOrDirectory(file);
-		switch(ford) {
-			// File was entered
-			case 0: 
-				// Adds the file entered to the end of the current path
-				dir = allocFilename("%s/%s", path, file);
-				// Creates the directory .comment at that path
-				makeDir(dir);
+		if (ford == 0) {
+			// Adds the file entered to the end of the current path
+			dir = allocFilename("%s/%s", path, file);
+			// Creates the directory .comment at that path
+			makeDir(dir);
 
-				// Add .comment directory to the path
-				char * commentDir = allocFilename("%s/%s", dir, COMMENT);
+			// Add .comment directory to the path
+			char * commentDir = allocFilename("%s/%s", dir, COMMENT);
 
-				// Add ..comment in that folder
-				char * fin = allocFilename("%s/%s.comment", commentDir, DOT);
+			// Add ..comment in that folder
+			char * fin = allocFilename("%s/%s.comment", commentDir, DOT);
 
-				FILE *fp2;
-				if (append) {
-					fp2 = fopen(fin, "a");
-					fprintf(fp2, " %s", comment);
-				} else {
-					fp2 = fopen(fin, "w+");		
-					fprintf(fp2, "%s", comment);
-				}
-				fclose(fp2);
+			FILE *fp2;
+			if (append) {
+				fp2 = fopen(fin, "a");
+				fprintf(fp2, " %s", comment);
+			} else {
+				fp2 = fopen(fin, "w+");		
+				fprintf(fp2, "%s", comment);
+			}
+			fclose(fp2);
 
-				freeFilename(dir);
-				freeFilename(commentDir);
-				freeFilename(fin);
+			freeFilename(dir);
+			freeFilename(commentDir);
+			freeFilename(fin);
+		} else if (ford == 1) {
+			// File is entered
+			makeDir(path);
 
-				break;
-				// File is entered
-			case 1:
-					makeDir(path);
+			// This will get a string with the path/.comment
+			// Append this to the path of the directory we want to put it in
+			char * s = allocFilename("%s/%s", path, COMMENT);
 
-					// This will get a string with the path/.comment
-					// Append this to the path of the directory we want to put it in
-					char * s = allocFilename("%s/%s", path, COMMENT);
+			// Now add the file we want to that
+			char * full = allocFilename("%s/%s.comment", s, file);
 
-					// Now add the file we want to that
-					char * full = allocFilename("%s/%s.comment", s, file);
+			FILE *fp;
+			if (append) {
+				fp = fopen(full, "a");
+				fprintf(fp, " %s", comment);
+			} else {
+				fp = fopen(full, "w+");		
+				fprintf(fp, "%s", comment);
+			}
+			fclose(fp);
 
-					FILE *fp;
-					if (append) {
-						fp = fopen(full, "a");
-						fprintf(fp, " %s", comment);
-					} else {
-						fp = fopen(full, "w+");		
-						fprintf(fp, "%s", comment);
-					}
-					fclose(fp);
-
-					freeFilename(s);
-					freeFilename(full);
-					break;
-					// Unknown what was entered
-			default: printf("Not sure what to do here...");
-					 break;
+			freeFilename(s);
+			freeFilename(full);
+		} else {
+			// Unknown what was entered
+			printf("Not sure what to do here...");
 		}
 	} else {
 		printf("Sorry cant find a file called %s\n", file);
