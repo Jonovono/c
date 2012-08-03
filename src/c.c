@@ -34,8 +34,9 @@ void freeFilename(char *filename);
 int main (int argc, const char *argv[]) {
 	// Get the current directory
 	char cwd[1024];
-	if (!getcwd(cwd, sizeof(cwd)))
-		perror("getcwd() error");	
+	if (!getcwd(cwd, sizeof(cwd))) {
+		perror("getcwd() error");
+	}
 
 	int numargs, all = 0, asc = 0, desc = 0, push = 0, uk = 0, help = 0, current = 0;
 	const char *c;
@@ -67,17 +68,17 @@ int main (int argc, const char *argv[]) {
 
 	if (uk > 2) {
 		printUsage();
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	if (args == 1) {
 			printUsage();
-			return 1;
+			return EXIT_FAILURE;
 	} else if (args == 2) {
 		// Show the help menu
 		if (help) {
 			printUsage();
-			return 1;
+			return EXIT_FAILURE;
 		}
 		// Show all the files
 		else if (all) {
@@ -122,7 +123,7 @@ int main (int argc, const char *argv[]) {
 		// Not certain
 		printUsage();
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 //Checks if a directory exists.
@@ -180,14 +181,13 @@ int fileOrDirectory(const char *path) {
 		} else if (s.st_mode & S_IFREG) {
 			// Is a file
 			return 1;
-		} else {
-			// Something else
-			return -1;
 		}
 	} else {
 		// Error
 		printf("Error occurred\n");
 	}
+
+	return -1;
 }
 
 // Checks if entered file/dir has a comment
@@ -380,7 +380,6 @@ void printAllOrder(char *newpath, bool desc) {
 	printf("\n");
 
 	FILE *fp;
-	int status;
 	char path[1035];
 
 	/* Open the command for reading. */
@@ -391,7 +390,7 @@ void printAllOrder(char *newpath, bool desc) {
 	}
 	if (fp == NULL) {
 		printf("Failed to run command\n" );
-		exit;
+		exit(EXIT_FAILURE);
 	}
 
 	/* Read the output a line at a time - output it. */
