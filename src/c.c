@@ -15,36 +15,34 @@ typedef int bool;
 #define COMMENT ".comment"
 #define DOT "."
 
-bool dirOrFileExists(const char dir[]);
-void makeDir(char path[]);
-void printFiles(char path[]);
-int fileOrDirectory(const char path[]);
-void checkComment(const char file[], char path[]);
-void printComment(const char filename[], char path[]);
-int length(const char string[]);
-void addComment(const char file[], char path[], const char comment[], bool append);
-void printAllOrder(char path[], bool desc);
+bool dirOrFileExists(const char *dir);
+void makeDir(char *path);
+void printFiles(char *path);
+int fileOrDirectory(const char *path);
+void checkComment(const char *file, char *path);
+void printComment(const char *filename, char *path);
+int length(const char *string);
+void addComment(const char *file, char *path, const char *comment, bool append);
+void printAllOrder(char *path, bool desc);
 void printUsage();
-void printCurrentComment(char path[]);
+void printCurrentComment(char *path);
 void put_multiline(const char *s,int width);
 void strip(char *s);
-char * allocFilename( const char* format, const char*  base, const char*  leaf );
-void freeFilename( char* filename );
+char *allocFilename(const char *format, const char *base, const char *leaf);
+void freeFilename(char *filename);
 
-int main (int argc, const char * argv[]) {
-
+int main (int argc, const char *argv[]) {
     // Get the current directory
     char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-        ;
-    else
+    if (!getcwd(cwd, sizeof(cwd)))
         perror("getcwd() error");	
 
-    int numargs, all=0, asc=0, desc=0, push=0, uk=0, help=0, current=0;
+    int numargs, all = 0, asc = 0, desc = 0, push = 0, uk = 0, help = 0, current = 0;
     const char *c;
 
     numargs = argc;
 
+    // TODO: Convert to getopt
     while (--numargs > 0) {
         c = argv[numargs];
 
@@ -72,9 +70,10 @@ int main (int argc, const char * argv[]) {
         return 1;
     }
 
-    switch(args) {
+    switch (args) {
         // Show the comment for the current directory
-        case 1: printUsage();
+        case 1:
+                printUsage();
                 return 1;
                 break;
         case 2: 
@@ -101,7 +100,6 @@ int main (int argc, const char * argv[]) {
                 }
                 break;
         case 3: 
-
                 if (current) {										// Add comment to the current directory
                     // char *file;
                     // file = "CURRENT";
@@ -126,20 +124,21 @@ int main (int argc, const char * argv[]) {
                     // Add a comment to the given filename
                 } 
                 // Push comment to given file
-                else	if ( push) {
+                else if ( push) {
                     makeDir(cwd);
                     addComment(argv[1], cwd, argv[3], true);
                 }
                 break;
 
                 // Not certain
-        default: printUsage();
+        default:
+                printUsage();
     }
     return 0;
 }
 
 //Checks if a directory exists.
-bool dirOrFileExists(const char dir[]) {
+bool dirOrFileExists(const char *dir) {
     struct stat st;
     if (stat(dir, &st) == 0) {
         return true;
@@ -150,7 +149,7 @@ bool dirOrFileExists(const char dir[]) {
 }
 
 // Makes the comment directory at the path given
-void makeDir(char path[]) {
+void makeDir(char *path) {
     // Append this to the path of the directory we want to put it in
     char * s = allocFilename("%s/%s", path, COMMENT);
 
@@ -161,7 +160,7 @@ void makeDir(char path[]) {
 }
 
 // Prints all the files in the current directory
-void printFiles(char path[]) {
+void printFiles(char *path) {
     // Print the current directories comment
     printCurrentComment(path);
     printf("\n");
@@ -185,7 +184,7 @@ void printFiles(char path[]) {
 // Return 0 if directory
 // Return 1 if File
 // Else return -1
-int fileOrDirectory(const char path[]) {
+int fileOrDirectory(const char *path) {
     struct stat s;
 
     if (stat(path, &s) == 0) {
@@ -208,7 +207,7 @@ int fileOrDirectory(const char path[]) {
 
 // Checks if entered file/dir has a comment
 // If so prints it. If not just prints file/dir name
-void checkComment(const char file[], char path[]) {
+void checkComment(const char *file, char *path) {
     char *dir;
     char *s;
 
@@ -223,10 +222,10 @@ void checkComment(const char file[], char path[]) {
                 makeDir(dir);
 
                 // Add .comment directory to that path
-                char * commentDir = allocFilename("%s/%s", dir, COMMENT);
+                char *commentDir = allocFilename("%s/%s", dir, COMMENT);
 
                 // Ands ..comment to that path to get the comment for that directory
-                char * fin = allocFilename("%s/%s.comment", commentDir, DOT);
+                char *fin = allocFilename("%s/%s.comment", commentDir, DOT);
 
                 if (dirOrFileExists(fin)) {
                     printComment(file, fin);
@@ -245,7 +244,7 @@ void checkComment(const char file[], char path[]) {
                 s = allocFilename("%s/%s", path, COMMENT);
 
                 //Next add the file to the end of that path
-                char * r = allocFilename("%s/%s.comment", s, file);
+                char *r = allocFilename("%s/%s.comment", s, file);
 
 
                 if (dirOrFileExists(r)) {
@@ -258,7 +257,8 @@ void checkComment(const char file[], char path[]) {
                 freeFilename(r);
                 break;
                 // Unknown what was entered
-            default: printf("Not sure what to do here...");
+            default:
+                     printf("Not sure what to do here...");
                      break;
         }
     } else {
@@ -267,13 +267,13 @@ void checkComment(const char file[], char path[]) {
 }
 
 // Prints the comment for the current directory
-void printCurrentComment(char path[]) {
+void printCurrentComment(char *path) {
     makeDir(path);
     // Append /.comment to the end of the current path
-    char * dir = allocFilename("%s/%s", path, COMMENT);
+    char *dir = allocFilename("%s/%s", path, COMMENT);
 
     // Append ..comment to the end of that path
-    char * fin = allocFilename("%s/%s.comment", dir, DOT);
+    char *fin = allocFilename("%s/%s.comment", dir, DOT);
 
     if (dirOrFileExists(fin)) {
         // Open that file to print the conents
@@ -305,7 +305,7 @@ void printCurrentComment(char path[]) {
 }
 
 // Print the comment for the given filename
-void printComment(const char filename[], char path[]) {
+void printComment(const char *filename, char *path) {
     FILE *fp;
     char ch;
     char newch[1000];
@@ -332,7 +332,7 @@ void printComment(const char filename[], char path[]) {
 }
 
 // Adds a comment to the given file/directory
-void addComment(const char file[], char path[], const char comment[], bool append) {
+void addComment(const char *file, char *path, const char *comment, bool append) {
     char *dir;
 
     if (dirOrFileExists(file)) {
@@ -367,7 +367,8 @@ void addComment(const char file[], char path[], const char comment[], bool appen
 
                 break;
                 // File is entered
-            case 1:	makeDir(path);
+            case 1:
+                    makeDir(path);
 
                     // This will get a string with the path/.comment
                     // Append this to the path of the directory we want to put it in
@@ -399,7 +400,7 @@ void addComment(const char file[], char path[], const char comment[], bool appen
 }
 
 // Prints all the files in either ascending or descending order
-void printAllOrder(char newpath[], bool desc) {
+void printAllOrder(char *newpath, bool desc) {
     printCurrentComment(newpath);
     printf("\n");
 
@@ -430,26 +431,25 @@ void printAllOrder(char newpath[], bool desc) {
 
 // Usage for the program
 void printUsage() {
-    fprintf(stderr, BLUE "c\n" RESETCOLOR"  by @Jonovono - Add comments to files or directories.\n\n");
-    fprintf(stderr, "Usage:\n");
-    fprintf(stderr, "  c all to list all the files with their comments.\n");
-    fprintf(stderr, "  c all (+ or -) to list all the files in ascending or descending order.\n");
-    fprintf(stderr, "  c <filename> to view that files comment if there is one.\n");
-    fprintf(stderr, "  c <filename> \"comment\" give the entered file the entered comment\n");
-    fprintf(stderr, "  c <filename> -p \"{comment}\" to append comment to that files comment.\n");
-    fprintf(stderr, "  Replace <filename> with . to do the commands on the current directory.\n\n");
+    fputs(BLUE "c\n" RESETCOLOR"  by @Jonovono - Add comments to files or directories.\n\n", stderr);
+    fputs("Usage:\n", stderr);
+    fputs("  c all to list all the files with their comments.\n", stderr);
+    fputs("  c all (+ or -) to list all the files in ascending or descending order.\n", stderr);
+    fputs("  c <filename> to view that files comment if there is one.\n", stderr);
+    fputs("  c <filename> \"comment\" give the entered file the entered comment\n", stderr);
+    fputs("  c <filename> -p \"{comment}\" to append comment to that files comment.\n", stderr);
+    fputs("  Replace <filename> with . to do the commands on the current directory.\n\n", stderr);
 }
 
 // If comment is long will print it in a nice column, ish
-void put_multiline(const char *s,int width)
-{
-    int n,i=0;
+void put_multiline(const char *s, int width) {
+    int n, i = 0;
     char t[100];
-    while( 1==sscanf(s,"%99s%n",t,&n) )
-    {
-        if( i+strlen(t)>width ) puts(""),i=0, printf("\t");
+    while(1 == sscanf(s,"%99s%n",t,&n)) {
+        if(i + strlen(t) > width)
+            puts(""), i=0, printf("\t");
         printf("%s%s",i?++i," ":"",t);i+=strlen(t);
-        s+=n;
+        s += n;
     }
 }
 
@@ -465,14 +465,13 @@ void strip(char *s) {
     *p2 = '\0';
 }
 
-char * allocFilename( const char* format, const char*  base, const char*  leaf )
-{
-    char * s = malloc(snprintf(NULL, 0, format, base, leaf) + 1);
+char *allocFilename(const char *format, const char *base, const char *leaf ) {
+    char *s = malloc(snprintf(NULL, 0, format, base, leaf) + 1);
     sprintf(s, format, base, leaf);
     return s;
 }
 
-void freeFilename( char* filename )
+void freeFilename(char *filename)
 {
     free(filename);
 }
