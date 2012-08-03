@@ -229,7 +229,6 @@ void checkComment(const char *file, char *path) {
 			//Next add the file to the end of that path
 			char *r = allocFilename("%s/%s.comment", s, file);
 
-
 			if (dirOrFileExists(r)) {
 				printComment(file, r);
 			} else {
@@ -241,7 +240,6 @@ void checkComment(const char *file, char *path) {
 		} else {
 			// Unknown what was entered
 			 printf("Not sure what to do here...");
-			 break;
 		}
 	} else {
 		printf("Sorry cant find a file called %s\n", file);
