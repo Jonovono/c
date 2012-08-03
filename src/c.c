@@ -117,13 +117,10 @@ int main (int argc, const char *argv[]) {
 				break;
 
 		case 4: 
-				// Push comment to the current directory
-				if (current && push) {
-					addComment(argv[1], cwd, argv[3], true);
+				if (current && push) { // Push comment to the current directory
 					// Add a comment to the given filename
-				} 
-				// Push comment to given file
-				else if ( push) {
+					addComment(argv[1], cwd, argv[3], true);
+				} else if (push) {       // Push comment to given file
 					makeDir(cwd);
 					addComment(argv[1], cwd, argv[3], true);
 				}
@@ -141,8 +138,7 @@ bool dirOrFileExists(const char *dir) {
 	struct stat st;
 	if (stat(dir, &st) == 0) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
@@ -150,10 +146,11 @@ bool dirOrFileExists(const char *dir) {
 // Makes the comment directory at the path given
 void makeDir(char *path) {
 	// Append this to the path of the directory we want to put it in
-	char * s = allocFilename("%s/%s", path, COMMENT);
+	char *s = allocFilename("%s/%s", path, COMMENT);
 
-	if (!dirOrFileExists(s))
+	if (!dirOrFileExists(s)) {
 		mkdir(s, S_IRWXU);
+	}
 
 	freeFilename(s);
 }
@@ -167,10 +164,8 @@ void printFiles(char *path) {
 	DIR *mydir = opendir(path);
 	struct dirent *entry = NULL;
 
-	while((entry = readdir(mydir))) /* If we get EOF, the expression is 0 and
-									 * the loop stops. */
-	{
-		//We will not show the dot files
+	while((entry = readdir(mydir))) { // If we get EOF, the expression is NULL and the loop stops
+		// We will not show the dot files
 		if (entry->d_name[0] == '.') {
 			continue;
 		}
@@ -197,8 +192,7 @@ int fileOrDirectory(const char *path) {
 			// Something else
 			return -1;
 		}
-	}
-	else {
+	} else {
 		// Error
 		printf("Error occurred\n");
 	}
