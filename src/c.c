@@ -20,10 +20,10 @@ void makeDir(const char *path);
 void printFiles(const char *path);
 int fileOrDirectory(const char *path);
 void checkComment(const char *file, const char *path);
-void printComment(const char *filename, char *path);
+void printComment(const char *filename, const char *path);
 int length(const char *string);
 void addComment(const char *file, char *path, const char *comment, bool append);
-void printAllOrder(char *path, bool desc);
+void printAllOrder(const char *path, bool desc);
 void printUsage();
 void printCurrentComment(const char *path);
 void put_multiline(const char *s,int width);
@@ -266,7 +266,7 @@ void printCurrentComment(const char *path) {
 }
 
 // Print the comment for the given filename
-void printComment(const char *filename, char *path) {
+void printComment(const char *filename, const char *path) {
 	FILE *fp;
 	char ch;
 	char newch[1000];
@@ -338,7 +338,7 @@ void addComment(const char *file, char *path, const char *comment, bool append) 
 }
 
 // Prints all the files in either ascending or descending order
-void printAllOrder(char *newpath, bool desc) {
+void printAllOrder(const char *newpath, bool desc) {
 	printCurrentComment(newpath);
 	printf("\n");
 
