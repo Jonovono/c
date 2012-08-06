@@ -16,16 +16,16 @@ typedef int bool;
 #define DOT "."
 
 bool dirOrFileExists(const char *dir);
-void makeDir(char *path);
-void printFiles(char *path);
+void makeDir(const char *path);
+void printFiles(const char *path);
 int fileOrDirectory(const char *path);
-void checkComment(const char *file, char *path);
+void checkComment(const char *file, const char *path);
 void printComment(const char *filename, char *path);
 int length(const char *string);
 void addComment(const char *file, char *path, const char *comment, bool append);
 void printAllOrder(char *path, bool desc);
 void printUsage();
-void printCurrentComment(char *path);
+void printCurrentComment(const char *path);
 void put_multiline(const char *s,int width);
 void strip(char *s);
 
@@ -135,7 +135,7 @@ bool dirOrFileExists(const char *dir) {
 }
 
 // Makes the comment directory at the path given
-void makeDir(char *path) {
+void makeDir(const char *path) {
 	// Append this to the path of the directory we want to put it in
 	char *s = NULL;
 	asprintf(&s, "%s/" COMMENT, path);
@@ -148,7 +148,7 @@ void makeDir(char *path) {
 }
 
 // Prints all the files in the current directory
-void printFiles(char *path) {
+void printFiles(const char *path) {
 	// Print the current directories comment
 	printCurrentComment(path);
 	printf("\n");
@@ -191,11 +191,11 @@ int fileOrDirectory(const char *path) {
 
 // Checks if entered file/dir has a comment
 // If so prints it. If not just prints file/dir name
-void checkComment(const char *file, char *path) {
+void checkComment(const char *file, const char *path) {
 	// First add the comment path to the end of the current path
 	if (dirOrFileExists(file)) {
 		char *dir = NULL;
-		const char *branch = NULL;
+		char *branch = NULL;
 		const char *leaf = DOT;
 		int ford = fileOrDirectory(file);
 		if (ford == 0) {
@@ -207,7 +207,7 @@ void checkComment(const char *file, char *path) {
 			// File is entered
 			// makeDir(path);
 
-			branch = path;
+			branch = strdup(path);
 			leaf = file;
 		} else {
 			// Unknown what was entered
@@ -223,16 +223,14 @@ void checkComment(const char *file, char *path) {
 			printf(BLUE "%s" RESETCOLOR "\n", file);
 		}
 
-		if (ford == 0) {
-			free(dir);
-		}
+		free(dir);
 	} else {
 		printf("Sorry cant find a file called %s\n", file);
 	}
 }
 
 // Prints the comment for the current directory
-void printCurrentComment(char *path) {
+void printCurrentComment(const char *path) {
 	makeDir(path);
 	// Append /.comment to the end of the current path
 	// Append ..comment to the end of that path
