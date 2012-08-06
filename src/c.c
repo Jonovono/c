@@ -192,48 +192,39 @@ int fileOrDirectory(const char *path) {
 // Checks if entered file/dir has a comment
 // If so prints it. If not just prints file/dir name
 void checkComment(const char *file, char *path) {
-	// TODO: This could be refactored a bit
-
 	// First add the comment path to the end of the current path
 	if (dirOrFileExists(file)) {
 		char *dir = NULL;
+		const char *branch = NULL;
+		const char *leaf = DOT;
 		int ford = fileOrDirectory(file);
 		if (ford == 0) {
 			// Directory was entered
 			// Appends the directory name to the end of current path
-			asprintf(&dir, "%s/%s", path, file);
-			makeDir(dir);
-
-			// Ands ..comment to that path to get the comment for that directory
-			char *fin = NULL;
-			asprintf(&fin, "%s/" COMMENT "/" DOT ".comment", dir);
-
-			if (dirOrFileExists(fin)) {
-				printComment(file, fin);
-			} else {
-				printf(BLUE "%s" RESETCOLOR "\n", file);
-			}
-
-			free(fin);
-			free(dir);
+			asprintf(&branch, "%s/%s", path, file);
+			makeDir(branch);
 		} else if (ford == 1) {
 			// File is entered
 			// makeDir(path);
 
-			// Adds /.comment to the end of the current path
-			// Next add the file to the end of that path
-			asprintf(&dir, "%s/" COMMENT "/%s.comment", path, file);
-
-			if (dirOrFileExists(dir)) {
-				printComment(file, dir);
-			} else {
-				printf(BLUE "%s" RESETCOLOR "\n", file);
-			}
-
-			free(dir);
+			branch = path;
+			leaf = file;
 		} else {
 			// Unknown what was entered
 			 printf("Not sure what to do here...");
+			 return;
+		}
+
+		asprintf(&dir, "%s/" COMMENT "/%s.comment", branch, leaf);
+		
+		if (dirOrFileExists(dir)) {
+			printComment(file, dir);
+		} else {
+			printf(BLUE "%s" RESETCOLOR "\n", file);
+		}
+
+		if (ford == 0) {
+			free(dir);
 		}
 	} else {
 		printf("Sorry cant find a file called %s\n", file);
@@ -305,58 +296,43 @@ void printComment(const char *filename, char *path) {
 
 // Adds a comment to the given file/directory
 void addComment(const char *file, char *path, const char *comment, bool append) {
-	// TODO: This could be refactored
-
 	if (dirOrFileExists(file)) {
 		char *dir = NULL;
+		const char *leaf = DOT;
 		int ford = fileOrDirectory(file);
 		if (ford == 0) {
 			// Adds the file entered to the end of the current path
 			asprintf(&dir, "%s/%s", path, file);
-			// Creates the directory .comment at that path
-			makeDir(dir);
-
-			// Add .comment directory to the path
-			// Add ..comment in that folder
-			char *fin = NULL;
-			asprintf(&fin, "%s/" COMMENT "/%s.comment", dir, DOT);
-
-			FILE *fp2;
-			if (append) {
-				fp2 = fopen(fin, "a");
-				fprintf(fp2, " %s", comment);
-			} else {
-				fp2 = fopen(fin, "w+");		
-				fprintf(fp2, "%s", comment);
-			}
-			fclose(fp2);
-
-			free(dir);
-			free(fin);
 		} else if (ford == 1) {
 			// File is entered
-			makeDir(path);
-
-			// This will get a string with the path/.comment
-			// Append this to the path of the directory we want to put it in
-			// Now add the file we want to that
-			char *full = NULL;
-			asprintf(&full, "%s/" COMMENT "/%s.comment", path, file);
-
-			FILE *fp;
-			if (append) {
-				fp = fopen(full, "a");
-				fprintf(fp, " %s", comment);
-			} else {
-				fp = fopen(full, "w+");		
-				fprintf(fp, "%s", comment);
-			}
-			fclose(fp);
-
-			free(full);
+			dir = path;
+			leaf = file;
 		} else {
 			// Unknown what was entered
 			printf("Not sure what to do here...");
+			return;
+		}
+
+		makeDir(path);
+
+		char *full = NULL;
+		asprintf(&full, "%s/" COMMENT "/%s.comment", dir, leaf);
+
+		free(full);
+
+		FILE *fp;
+		if (append) {
+			fp = fopen(full, "a");
+			fprintf(fp, " %s", comment);
+		} else {
+			fp = fopen(full, "w+");		
+			fprintf(fp, "%s", comment);
+		}
+
+		fclose(fp);
+
+		if (ford == 0) {
+			free(dir);
 		}
 	} else {
 		printf("Sorry cant find a file called %s\n", file);
@@ -406,6 +382,7 @@ void printUsage() {
 
 // If comment is long will print it in a nice column, ish
 void put_multiline(const char *s, int width) {
+	// See tput cols or the COLUMNS env var
 	int n, i = 0;
 	char t[100];
 	while(1 == sscanf(s,"%99s%n",t,&n)) {
