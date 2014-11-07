@@ -316,7 +316,9 @@ void addComment(const char *file, char *path, const char *comment, bool append) 
 		char *full = NULL;
 		asprintf(&full, "%s/" COMMENT "/%s.comment", dir, leaf);
 
-		free(full);
+		//I dont know why author made full NULL again (Maybe Its a Typo). It gives "c" Runtime Segmentation Fault.
+		//However Code Works Just Fine When Line Below Is Commented. 
+		//free(full);
 
 		FILE *fp;
 		if (append) {
