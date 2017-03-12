@@ -395,14 +395,19 @@ void put_multiline(const char *s, int width) {
 	}
 }
 
+// Strip trailing new line or tab characters
 void strip(char *s) {
 	char *p2 = s;
 	while(*s != '\0') {
 		if(*s != '\t' && *s != '\n') {
-			*p2++ = *s++;
-		} else {
-			++s;
+			p2 = s;           // Move the second pointer if the current char is non-whitespace(newline/tab)
 		}
+
+        s++;                  // Increment current pointer
 	}
-	*p2 = '\0';
+
+    // It is always true that p < s
+    // at the end, so it is safe to access
+    // p2 + 1
+	*(p2+1) = '\0';
 }
