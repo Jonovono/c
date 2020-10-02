@@ -56,7 +56,8 @@ Of course, use . in replace of <filename> for the current directory.
 	
 ## Download
 Get it using the following command:
-
+    
+    $ pkg install git
     $ git clone git://github.com/Jonovono/c.git
 
 And then should be able to install going:
