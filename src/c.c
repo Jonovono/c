@@ -63,7 +63,7 @@ int main (int argc, const char *argv[]) {
 
 	int args;
 	args = argc;
-
+    //show the conditions of the arguments
 	if (uk > 2) {
 		printUsage();
 		return EXIT_FAILURE;
@@ -147,9 +147,9 @@ void makeDir(const char *path) {
 	free(s);
 }
 
-// Prints all the files in the current directory
+// Print all the files in the current directory
 void printFiles(const char *path) {
-	// Print the current directories comment
+	// Prints the comment in the current directory
 	printCurrentComment(path);
 	printf("\n");
 
