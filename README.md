@@ -1,4 +1,4 @@
----
+## Welcome!---
 title: c
 description: Add comments to files or folders.
 author: Jonovono
@@ -18,7 +18,7 @@ Sometimes I lose track of what certain folders or files are for or do. Instead o
 
 This is my first C program, so feel free to send some fixes or point out things I have done that could be better. Would love some feedback!
 
-## About / Examples
+## About / Examples 
 When run this program creates a .comments directory in the current directory to store the comments for the files. So a given file, for example, names file1.txt will be given an entry called file1.txt.comment in the comment directory.
 
 The main commands are:
@@ -54,7 +54,7 @@ To append a comment to the end of whatever that file has use:
 Of course, use . in replace of <filename> for the current directory.
 	
 	
-## Download
+## Download and Installation 
 Get it using the following command:
 
     $ git clone git://github.com/Jonovono/c.git
@@ -75,6 +75,6 @@ And those on Mac should be able to use:
 Follow me or give me feedback/suggestions etc on twitter [@Jonovono](https://twitter.com/#!/jonovono)
 
 Don't be afraid to make some changes and submit them!
-	
+## Happy coding!
 
 	
