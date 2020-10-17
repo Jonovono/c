@@ -29,6 +29,7 @@ void printCurrentComment(const char *path);
 void put_multiline(const char *s,int width);
 void strip(char *s);
 
+//Main Function
 int main (int argc, const char *argv[]) {
 	// Get the current directory
 	char cwd[1024];
